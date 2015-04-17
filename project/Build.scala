@@ -1,18 +1,26 @@
 import sbt._
 import Keys._
+import com.typesafe.sbteclipse.plugin.EclipsePlugin.EclipseKeys
 
 object FPInScalaBuild extends Build {
+
   val opts = Project.defaultSettings ++ Seq(
     scalaVersion := "2.11.5",
+    ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) },
+//    scalacOptions ++= Seq(
+//      "-deprecation",
+//      "-unchecked"),
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
   )
-
+  
   lazy val root =
     Project(id = "fpinscala",
             base = file("."),
             settings = opts ++ Seq(
               onLoadMessage ~= (_ + nio2check())
-            )) aggregate (chapterCode, exercises, answers)
+            ))
+      .aggregate (chapterCode, exercises, answers, tests)
+      .dependsOn(tests % "compile->test")
   lazy val chapterCode =
     Project(id = "chapter-code",
             base = file("chaptercode"),
@@ -25,6 +33,16 @@ object FPInScalaBuild extends Build {
     Project(id = "answers",
             base = file("answers"),
             settings = opts)
+  lazy val tests =
+    Project(id = "tests",
+            base = file("tests"),
+            settings = opts ++ Seq(
+	      scalacOptions in Test ++= Seq("-Yrangepos"),
+	      libraryDependencies += ("org.specs2" %% "specs2-core" % "3.5" % "test"),
+	      EclipseKeys.skipParents in ThisBuild := false,
+	      resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+	    ))
+       .dependsOn(answers).aggregate(answers)
 
   def nio2check(): String = {
     val cls = "java.nio.channels.AsynchronousFileChannel"
