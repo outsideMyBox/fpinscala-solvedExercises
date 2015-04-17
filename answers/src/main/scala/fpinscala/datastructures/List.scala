@@ -53,6 +53,7 @@ object List { // `List` companion object. Contains functions for creating and wo
   /*
   3. The third case is the first that matches, with `x` bound to 1 and `y` bound to 2.
   */
+   def resultOfMatchExpression = 3  
 
   /*
   Although we could return `Nil` when the input list is empty, we choose to throw an exception instead. This is
@@ -167,7 +168,14 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def length2[A](l: List[A]): Int = foldLeft(l, 0)((acc,h) => acc + 1)
 
-  def reverse[A](l: List[A]): List[A] = foldLeft(l, List[A]())((acc,h) => Cons(h,acc))
+  def reverse[A](l: List[A]) = {
+    def reverse0(list: List[A], acc: List[A]): List[A] = list match {
+      case Nil => acc
+      case Cons(x, xs) => reverse0(xs, Cons(x, acc))
+    }
+    reverse0(l, Nil)
+  }
+  def reverseWithFold[A](l: List[A]): List[A] = foldLeft(l, List[A]())((acc,h) => Cons(h,acc))
 
   /*
   The implementation of `foldRight` in terms of `reverse` and `foldLeft` is a common trick for avoiding stack overflows
@@ -196,6 +204,9 @@ object List { // `List` companion object. Contains functions for creating and wo
   def appendViaFoldRight[A](l: List[A], r: List[A]): List[A] =
     foldRight(l, r)(Cons(_,_))
 
+  def appendViaFoldLeft[A](a1: List[A], a2: List[A]): List[A] =
+    foldLeft(reverse(a1), a2)((list, elt) => Cons(elt, list))    
+    
   /*
   Since `append` takes time proportional to its first argument, and this first argument never grows because of the
   right-associativity of `foldRight`, this function is linear in the total length of all lists. You may want to try

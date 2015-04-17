@@ -1,6 +1,0 @@
-package fpinscala
-
-
-object Tests {
-
-}

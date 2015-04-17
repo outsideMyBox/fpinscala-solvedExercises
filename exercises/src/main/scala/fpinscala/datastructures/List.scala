@@ -49,20 +49,77 @@ object List { // `List` companion object. Contains functions for creating and wo
   def product2(ns: List[Double]) =
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
+    
+  // Exercise 3.1: result of match.
+  def resultOfMatchExpression:Int = ??? 
 
-  def tail[A](l: List[A]): List[A] = sys.error("todo")
+  // Exercise 3.2: tail.
+  def tail[A](l: List[A]): List[A] = ???
 
-  def setHead[A](l: List[A], h: A): List[A] = sys.error("todo")
+  // Exercise 3.3: setHead.
+  def setHead[A](l: List[A], h: A): List[A] = ???
 
-  def drop[A](l: List[A], n: Int): List[A] = sys.error("todo")
+  // Exercise 3.4: drop.
+  def drop[A](l: List[A], n: Int): List[A] = ???
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = sys.error("todo")
+  // Exercise 3.5: dropWhile.
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = ???
 
-  def init[A](l: List[A]): List[A] = sys.error("todo")
+  // Exercise 3.6: init.
+  def init[A](l: List[A]): List[A] = ???
 
-  def length[A](l: List[A]): Int = sys.error("todo")
+  // Exercise 3.9: length with foldRight.
+  def length[A](l: List[A]): Int = ???
 
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = sys.error("todo")
+  // Exercise 3.10: foldLeft.
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = ???
 
-  def map[A,B](l: List[A])(f: A => B): List[B] = sys.error("todo")
+  // Exercise 3.11: sum , product and length with foldLeft.
+  def sum3(l: List[Int]):Int = ???
+  def product3(l: List[Double]) = ???
+  def length2[A](l: List[A]): Int = ???  
+  
+  // Exercise 3.12: reverse.
+  def reverse[A](l: List[A]): List[A] = ???
+  def reverseWithFold[A](l: List[A]): List[A] = ???
+  
+  // Exercise 3.13: foldRight in terms of foldLeft.
+  def foldRightViaFoldLeft[A,B](l: List[A], z: B)(f: (A,B) => B): B = ???
+
+  // Exercise 3.13: foldLeft in terms of foldRight.
+  def foldLeftViaFoldRight[A,B](l: List[A], z: B)(f: (B,A) => B): B = ???
+  
+  // Exercise 3.14: append in terms of either foldLeft or foldRight.
+  def appendViaFoldRight[A](l: List[A], r: List[A]): List[A] = ???
+  def appendViaFoldLeft[A](l1: List[A], l2: List[A]): List[A] = ???
+  
+  // Exercise 3.15: concatenation.
+  def concat[A](l: List[List[A]]): List[A] = ???
+  
+  // Exercise 3.16: add one.
+  def add1(l: List[Int]): List[Int] = ???
+  
+  // Exercise 3.17: double to string.
+  def doubleToString(l: List[Double]): List[String] = ???
+  
+  // Exercise 3.18: map.
+  def map[A,B](l: List[A])(f: A => B): List[B] = ???
+  
+  // Exercise 3.19: filter.
+  def filter[A](l: List[A])(f: A => Boolean): List[A] = ???
+  
+  // Exercise 3.20 flatMap.
+  def flatMap[A,B](l: List[A])(f: A => List[B]): List[B] = ???
+  
+  // Exercise 3.21: filter with flatMap.
+  def filterViaFlatMap[A](l: List[A])(f: A => Boolean): List[A] = ???
+  
+  // Exercise 3.22: add elts of two lists.
+  def addPairwise(a: List[Int], b: List[Int]): List[Int] = ???
+  
+  // Exercise 3.23: zipWith.
+  def zipWith[A,B,C](a: List[A], b: List[B])(f: (A,B) => C): List[C] = ???
+  
+  // Exercise 3.24: hasSubsequence.
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = ???
 }

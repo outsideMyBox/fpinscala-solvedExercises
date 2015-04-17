@@ -13,6 +13,7 @@ object FPInScalaBuild extends Build {
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
   )
   
+ 
   lazy val root =
     Project(id = "fpinscala",
             base = file("."),
@@ -33,16 +34,22 @@ object FPInScalaBuild extends Build {
     Project(id = "answers",
             base = file("answers"),
             settings = opts)
+            
+  lazy val moduleToTest = if(System.getProperty("test") == "answers") answers else exercises
+            
   lazy val tests =
     Project(id = "tests",
             base = file("tests"),
             settings = opts ++ Seq(
 	      scalacOptions in Test ++= Seq("-Yrangepos"),
-	      libraryDependencies += ("org.specs2" %% "specs2-core" % "3.5" % "test"),
+	      libraryDependencies ++= Seq(
+		"org.specs2" %% "specs2-core" % "3.5" % "test",
+		"org.specs2" %% "specs2-junit" % "3.5"
+	      ),
 	      EclipseKeys.skipParents in ThisBuild := false,
 	      resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 	    ))
-       .dependsOn(answers).aggregate(answers)
+       .dependsOn(moduleToTest).aggregate(moduleToTest)
 
   def nio2check(): String = {
     val cls = "java.nio.channels.AsynchronousFileChannel"

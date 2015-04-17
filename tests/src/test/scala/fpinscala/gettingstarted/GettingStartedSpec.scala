@@ -3,8 +3,10 @@ package fpinscala.gettingstarted
 import org.specs2.mutable._
 import org.specs2.specification.AllExpectations
 import org.specs2.matcher.DataTables
+import org.junit.runner.RunWith
+import org.specs2.runner.JUnitRunner
 
-
+@RunWith(classOf[JUnitRunner])
 class GettingStartedSpec extends Specification with DataTables {
 
   "The following exercises should be correct" >> {
