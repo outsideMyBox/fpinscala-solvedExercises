@@ -54,9 +54,11 @@ object List { // `List` companion object. Contains functions for creating and wo
   def resultOfMatchExpression:Int = ??? 
 
   // Exercise 3.2: tail.
+  // Use the message "tail of empty list" for your exception.
   def tail[A](l: List[A]): List[A] = ???
 
   // Exercise 3.3: setHead.
+  // Use the message "setHead on empty list" for your exception.
   def setHead[A](l: List[A], h: A): List[A] = ???
 
   // Exercise 3.4: drop.
@@ -66,6 +68,7 @@ object List { // `List` companion object. Contains functions for creating and wo
   def dropWhile[A](l: List[A], f: A => Boolean): List[A] = ???
 
   // Exercise 3.6: init.
+  // Use the message "init of empty list" for your exception.
   def init[A](l: List[A]): List[A] = ???
 
   // Exercise 3.9: length with foldRight.
