@@ -1,6 +1,6 @@
 # About this fork
 
-This fork adds unit tests to the exercises. It is still under development, the unit tests have been added up to the chapter 5 so far.
+This fork adds unit tests to the exercises. It is still under development, the unit tests have been added up to the chapter 6 so far.
 
 The modifications to the original repository have been kept to minimal but in some cases the solution or the exercise statement
 may be slightly different to be testable. For example, for some exercises the method signatures were added. If

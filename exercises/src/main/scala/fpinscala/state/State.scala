@@ -30,32 +30,58 @@ object RNG {
       (f(a), rng2)
     }
 
+  // Exercise 6.1: non negative int.
   def nonNegativeInt(rng: RNG): (Int, RNG) = ???
 
+  // Exercise 6.2: double between 0 and 1.
   def double(rng: RNG): (Double, RNG) = ???
 
+  // Exercise 6.3: intDouble.
   def intDouble(rng: RNG): ((Int,Double), RNG) = ???
 
+  // Exercise 6.3: doubleInt.
   def doubleInt(rng: RNG): ((Double,Int), RNG) = ???
 
+  // Exercise 6.3: double3.
   def double3(rng: RNG): ((Double,Double,Double), RNG) = ???
 
+  // Exercise 6.4: list of random integers.
   def ints(count: Int)(rng: RNG): (List[Int], RNG) = ???
 
+  // Exercise 6.5: double between 0 and 1 with map.
+  def _double: Rand[Double] = ???
+  
+  // Exercise 6.6: map2.
   def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
 
+  // Exercise 6.7: sequence.
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ???
+  
+  // Exercise 6.7: ints with sequence.
+  def _ints(count: Int): Rand[List[Int]] = ???
 
+  // Exercise 6.8: flatMap.
   def flatMap[A,B](f: Rand[A])(g: A => Rand[B]): Rand[B] = ???
+  
+  // Exercise 6.8: nonNegativeLessThan with flatMap.
+  def nonNegativeLessThan(n: Int): Rand[Int] = ???
+  
+  // Exercise 6.9: map via flatMap.
+  def _map[A,B](s: Rand[A])(f: A => B): Rand[B] = ???
+  
+  // Exercise 6.9: map2 via flatMap.
+  def _map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
 }
 
 case class State[S,+A](run: S => (A, S)) {
-  def map[B](f: A => B): State[S, B] =
-    sys.error("todo")
-  def map2[B,C](sb: State[S, B])(f: (A, B) => C): State[S, C] =
-    sys.error("todo")
-  def flatMap[B](f: A => State[S, B]): State[S, B] =
-    sys.error("todo")
+  // Exercise 6.10: map for State.
+  def map[B](f: A => B): State[S, B] = ???
+
+  // Exercise 6.10: map2 for State.
+  def map2[B,C](sb: State[S, B])(f: (A, B) => C): State[S, C] = ???
+
+  // Exercise 6.10: flatMap for State.
+  def flatMap[B](f: A => State[S, B]): State[S, B] = ???
 }
 
 sealed trait Input
@@ -66,5 +92,16 @@ case class Machine(locked: Boolean, candies: Int, coins: Int)
 
 object State {
   type Rand[A] = State[RNG, A]
+  
+  // Exercise 6.10: unit for State.
+  def unit[S, A](a: A): State[S, A] = ???
+  
+  // Exercise 6.10: sequence for State.
+  def sequence[S, A](sas: List[State[S, A]]): State[S, List[A]] = ???
+ 
+}
+
+object Candy {
+  // Exercise 6.11: candy machine.
   def simulateMachine(inputs: List[Input]): State[Machine, (Int, Int)] = ???
 }
