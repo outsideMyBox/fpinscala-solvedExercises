@@ -28,6 +28,39 @@ object Par {
       def call = a(es).get
     })
 
+  // === code not in the last version of the repository? ===============================
+  def map2WithTimeOut[A, B, C](a: Par[A], b: Par[B])(f: (A, B) => C): Par[C] =
+    es => {
+      val (af, bf) = (a(es), b(es))
+      Map2Future(af, bf, f)
+    }
+
+  /* Note: this implementation will not prevent repeated evaluation if multiple threads call `get` in parallel. We could prevent this using synchronization, but it isn't needed for our purposes here (also, repeated evaluation of pure values won't affect results). */
+  case class Map2Future[A, B, C](a: Future[A], b: Future[B],
+    f: (A, B) => C) extends Future[C] {
+    var cache: Option[C] = None
+    def isDone = cache.isDefined
+    def isCancelled = a.isCancelled || b.isCancelled
+    def cancel(evenIfRunning: Boolean) =
+      a.cancel(evenIfRunning) || b.cancel(evenIfRunning)
+    def get = compute(Long.MaxValue)
+    def get(timeout: Long, units: TimeUnit): C =
+      compute(TimeUnit.MILLISECONDS.convert(timeout, units))
+
+    private def compute(timeoutMs: Long): C = cache match {
+      case Some(c) => c
+      case None =>
+        val start = System.currentTimeMillis
+        val ar = a.get(timeoutMs, TimeUnit.MILLISECONDS)
+        val stop = System.currentTimeMillis; val at = stop - start
+        val br = b.get(timeoutMs - at, TimeUnit.MILLISECONDS)
+        cache = Some(f(ar, br))
+        cache.get
+    }
+  }
+  // ==============================================================================================     
+    
+    
   def lazyUnit[A](a: => A): Par[A] = fork(unit(a))
 
   def asyncF[A,B](f: A => B): A => Par[B] =
@@ -104,6 +137,14 @@ object Par {
       run(es)(choices(k))
     }
 
+  // From the RheinMainScala fork.
+  def choiceNViaChooser[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
+    chooser(n)(int => choices(int))
+
+  // From the RheinMainScala fork.
+  def choiceViaChooser[A](a: Par[Boolean])(ifTrue: Par[A], ifFalse: Par[A]): Par[A] =
+    chooser(a)(if (_) ifTrue else ifFalse)
+    
   /* `chooser` is usually called `flatMap` or `bind`. */
   def flatMap[A,B](p: Par[A])(choices: A => Par[B]): Par[B] =
     es => {

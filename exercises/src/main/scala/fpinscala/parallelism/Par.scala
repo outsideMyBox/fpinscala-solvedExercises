@@ -27,7 +27,40 @@ object Par {
     es => es.submit(new Callable[A] { 
       def call = a(es).get
     })
+    
+  // Exercises 7.3: map2 that respects the contract of timeouts on Future.
+  def map2WithTimeOut[A, B, C](a: Par[A], b: Par[B])(f: (A, B) => C): Par[C] = ???    
 
+  // Exercise 7.4: asyncF.
+  def asyncF[A,B](f: A => B): A => Par[B] = ???
+  
+  // Exercise 7.5: sequence.
+  def sequence[A](as: List[Par[A]]): Par[List[A]] = ???
+  
+  // Exercise 7.6: parFilter.
+  def parFilter[A](l: List[A])(f: A => Boolean): Par[List[A]] = ???
+  
+  // Exercise 7.11: choiceN.
+  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = ???
+    
+  // Exercise 7.11: choice and terms of choiceN.
+  def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] = ???
+  
+  // Exercise 7.13: chooser.
+  def chooser[A,B](p: Par[A])(choices: A => Par[B]): Par[B] = ???
+  def choiceNViaChooser[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = ???
+  def choiceViaChooser[A](a: Par[Boolean])(ifTrue: Par[A], ifFalse: Par[A]): Par[A] = ???
+  
+  // Exercise 7.14: join.
+  def join[A](a: Par[Par[A]]): Par[A] = ???
+  
+  // Exercise 7.14: joinViaFlatMap.
+  def joinViaFlatMap[A](a: Par[Par[A]]): Par[A] = ???
+
+  // Exercise 7.14: flatMapViaJoin.  
+  def flatMapViaJoin[A,B](p: Par[A])(f: A => Par[B]): Par[B] = ???
+ 
+  
   def map[A,B](pa: Par[A])(f: A => B): Par[B] = 
     map2(pa, unit(()))((a,_) => f(a))
 
@@ -38,11 +71,6 @@ object Par {
 
   def delay[A](fa: => Par[A]): Par[A] = 
     es => fa(es)
-
-  def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
-    es => 
-      if (run(es)(cond).get) t(es) // Notice we are blocking on the result of `cond`.
-      else f(es)
 
   /* Gives us infix syntax for `Par`. */
   implicit def toParOps[A](p: Par[A]): ParOps[A] = new ParOps(p)

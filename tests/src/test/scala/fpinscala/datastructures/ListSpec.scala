@@ -159,7 +159,7 @@ class ListSpec extends Specification with DataTables {
         }
     }
     
-    "Exercises 3.13: foldLeft in terms of foldRight." in {
+    "Exercise 3.13: foldLeft in terms of foldRight." in {
       "list" || "result" |
         Nil !! "_suffix" |
         List('a') !! "a_suffix" |
