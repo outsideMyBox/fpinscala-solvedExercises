@@ -147,7 +147,7 @@ class ListSpec extends Specification with DataTables {
           (list, reverse) => (List.reverse(list) must_== reverse) and (List.reverseWithFold(list) must_== reverse)
         }
     }
-
+    
     "Exercises 3.13: foldRight in terms of foldLeft." in {
       "list" || "result" |
         Nil !! "_suffix" |
