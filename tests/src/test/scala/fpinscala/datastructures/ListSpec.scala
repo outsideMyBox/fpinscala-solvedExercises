@@ -144,9 +144,19 @@ class ListSpec extends Specification with DataTables {
         List('a') !! List('a') |
         List('a', 'b') !! List('b', 'a') |
         List('a', 'b', 'c') !! List('c', 'b', 'a') |> {
-          (list, reverse) => (List.reverse(list) must_== reverse) and (List.reverseWithFold(list) must_== reverse)
+          (list, reverse) => List.reverse(list) must_== reverse
         }
     }
+
+    "Exercise 3.12: reverse with fold." in {
+      "list" || "reverse" |
+        Nil !! Nil |
+        List('a') !! List('a') |
+        List('a', 'b') !! List('b', 'a') |
+        List('a', 'b', 'c') !! List('c', 'b', 'a') |> {
+          (list, reverse) => List.reverseWithFold(list) must_== reverse
+        }
+    }    
     
     "Exercises 3.13: foldRight in terms of foldLeft." in {
       "list" || "result" |
@@ -170,7 +180,7 @@ class ListSpec extends Specification with DataTables {
         }
     }
 
-    "Exercise 3.14: append in terms of either foldLeft or foldRight." in {
+    "Exercise 3.14: append in terms of foldLeft." in {
       "list1" || "list2" || "appended" |
         Nil !! Nil !! Nil |
         List('x') !! List('y') !! List('x', 'y') |
@@ -178,7 +188,19 @@ class ListSpec extends Specification with DataTables {
         Nil !! List('y') !! List('y') |
         List('u', 'v', 'w') !! List('x', 'y') !! List('u', 'v', 'w', 'x', 'y') |> {
           (list1, list2, appended) =>
-            (List.appendViaFoldRight(list1, list2) must_== appended) and (List.appendViaFoldLeft(list1, list2) must_== appended)
+            List.appendViaFoldLeft(list1, list2) must_== appended
+        }
+    }
+    
+    "Exercise 3.14: append in terms of foldRight." in {
+      "list1" || "list2" || "appended" |
+        Nil !! Nil !! Nil |
+        List('x') !! List('y') !! List('x', 'y') |
+        List('x') !! Nil !! List('x') |
+        Nil !! List('y') !! List('y') |
+        List('u', 'v', 'w') !! List('x', 'y') !! List('u', 'v', 'w', 'x', 'y') |> {
+          (list1, list2, appended) =>
+            List.appendViaFoldRight(list1, list2) must_== appended
         }
     }
 

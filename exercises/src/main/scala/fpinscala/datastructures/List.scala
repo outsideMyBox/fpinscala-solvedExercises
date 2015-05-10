@@ -1,5 +1,7 @@
 package fpinscala.datastructures
 
+import scala.annotation.tailrec
+
 sealed trait List[+A] // `List` data type, parameterized on a type, `A`
 case object Nil extends List[Nothing] // A `List` data constructor representing the empty list
 /* Another data constructor, representing nonempty lists. Note that `tail` is another `List[A]`,
@@ -25,7 +27,6 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   val x = List(1, 2, 3, 4, 5) match {
     case Cons(x, Cons(2, Cons(4, _)))          => x
-    case Nil                                   => 42
     case Cons(x, Cons(y, Cons(3, Cons(4, _)))) => x + y
     case Cons(h, t)                            => h + sum(t)
     case _                                     => 101
@@ -92,9 +93,10 @@ object List { // `List` companion object. Contains functions for creating and wo
   def length[A](l: List[A]): Int = foldRight(l, 0)((_, b) => b + 1)
 
   // Exercise 3.10: foldLeft.
+  @tailrec
   def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = l match {
     case Cons(a, t) => foldLeft(t, f(z, a))(f)
-        case Nil        => z
+    case Nil        => z
   }
 
   // Exercise 3.11: sum , product and length with foldLeft.
@@ -103,53 +105,101 @@ object List { // `List` companion object. Contains functions for creating and wo
   def length2[A](l: List[A]): Int = foldLeft(l, 0)((l, _) => l + 1)
 
   // Exercise 3.12: reverse.
- 
+  //  def reverse[A](l: List[A]): List[A] = {
+  //    def setLast(list: List[A], last: A): List[A] = list match {
+  //      case Nil          => Cons(last, Nil)
+  //      case Cons(h, Nil) => Cons(h, Cons(last, Nil))
+  //      case Cons(h, t)   => Cons(h, setLast(t, last))
+  //    }
+  //    l match {
+  //      case Nil        => Nil
+  //      case Cons(h, t) => setLast(reverse(t), h)
+  //    }
+  //  }
   def reverse[A](l: List[A]): List[A] = {
-    def reverse0(toReverse: List[A], reversed:List[A]):List[A] = toReverse match {
-      case Nil => reversed
-      case Cons(h,t) => reverse0(t, setHead(reversed, h))
+    @tailrec
+    def reverse0(list: List[A], acc: List[A]): List[A] = list match {
+      case Nil        => acc
+      case Cons(h, t) => reverse0(t, Cons(h, acc))
     }
     reverse0(l, Nil)
   }
-  def reverseWithFold[A](l: List[A]): List[A] = ???
+
+  def reverseWithFold[A](l: List[A]): List[A] = foldLeft(l, List[A]())((b, a) => Cons(a, b))
 
   // Exercise 3.13: foldRight in terms of foldLeft.
-  def foldRightViaFoldLeft[A, B](l: List[A], z: B)(f: (A, B) => B): B = ???
+  def foldRightViaFoldLeft[A, B](l: List[A], z: B)(f: (A, B) => B): B =
+    foldLeft(reverse(l), z)((b, a) => f(a, b))
 
   // Exercise 3.13: foldLeft in terms of foldRight.
-  def foldLeftViaFoldRight[A, B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  def foldLeftViaFoldRight[A, B](l: List[A], z: B)(f: (B, A) => B): B =
+    // From book
+    foldRight(l, (b: B) => b)((a, g) => b => g(f(b, a)))(z) // From book
 
   // Exercise 3.14: append in terms of either foldLeft or foldRight.
-  def appendViaFoldRight[A](l: List[A], r: List[A]): List[A] = ???
-  def appendViaFoldLeft[A](l1: List[A], l2: List[A]): List[A] = ???
+  def appendViaFoldRight[A](l: List[A], r: List[A]): List[A] =
+    foldRight(l, r)((elt, listToAppend) => Cons(elt, listToAppend))
+
+  def appendViaFoldLeft[A](l1: List[A], l2: List[A]): List[A] =
+    foldLeft(reverse(l1), l2)((listToAppend, elt) => Cons(elt, listToAppend))
 
   // Exercise 3.15: concatenation.
-  def concat[A](l: List[List[A]]): List[A] = ???
+  def concat[A](l: List[List[A]]): List[A] =
+    foldLeft(l, List[A]())(appendViaFoldLeft)
 
   // Exercise 3.16: add one.
-  def add1(l: List[Int]): List[Int] = ???
+  def add1(l: List[Int]): List[Int] =
+    foldRightViaFoldLeft(l, List[Int]())((int, b) => Cons(int + 1, b))
 
   // Exercise 3.17: double to string.
-  def doubleToString(l: List[Double]): List[String] = ???
+  def doubleToString(l: List[Double]): List[String] =
+    foldRightViaFoldLeft(l, List[String]())((double, b) => Cons(double.toString, b))
 
   // Exercise 3.18: map.
-  def map[A, B](l: List[A])(f: A => B): List[B] = ???
+  def map[A, B](l: List[A])(f: A => B): List[B] =
+    foldRightViaFoldLeft(l, List[B]())((a, b) => Cons(f(a), b))
 
   // Exercise 3.19: filter.
-  def filter[A](l: List[A])(f: A => Boolean): List[A] = ???
+  def filter[A](l: List[A])(f: A => Boolean): List[A] =
+    foldRightViaFoldLeft(l, List[A]())((a, b) => if (f(a)) Cons(a, b) else b)
 
   // Exercise 3.20 flatMap.
-  def flatMap[A, B](l: List[A])(f: A => List[B]): List[B] = ???
+  def flatMap[A, B](l: List[A])(f: A => List[B]): List[B] =
+    concat(map(l)(f))
 
   // Exercise 3.21: filter with flatMap.
-  def filterViaFlatMap[A](l: List[A])(f: A => Boolean): List[A] = ???
+  def filterViaFlatMap[A](l: List[A])(f: A => Boolean): List[A] =
+    flatMap(l)((a) => if (f(a)) List(a) else Nil)
 
   // Exercise 3.22: add elts of two lists.
-  def addPairwise(a: List[Int], b: List[Int]): List[Int] = ???
+  def addPairwise(l1: List[Int], l2: List[Int]): List[Int] = (l1, l2) match {
+    case (Nil, _)                     => Nil
+    case (_, Nil)                     => Nil
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(h1 + h2, addPairwise(t1, t2))
+  }
 
   // Exercise 3.23: zipWith.
-  def zipWith[A, B, C](a: List[A], b: List[B])(f: (A, B) => C): List[C] = ???
+  def zipWith[A, B, C](a: List[A], b: List[B])(f: (A, B) => C): List[C] = (a, b) match {
+    case (Nil, _)                     => Nil
+    case (_, Nil)                     => Nil
+    case (Cons(h1, t1), Cons(h2, t2)) => Cons(f(h1, h2), zipWith(t1, t2)(f))
+  }
 
   // Exercise 3.24: hasSubsequence.
-  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = ???
+
+  def isPrefix[A](list: List[A], prefix: List[A]): Boolean = (list, prefix) match {
+    case (_, Nil)                                 => true
+    case (Cons(h1, t1), Cons(h2, t2)) if h1 == h2 => isPrefix(t1, t2)
+    case _                                        => false
+  }
+
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = (sup, sub) match {
+    case (_, Nil)        => true
+    case (Nil, Cons(_, _)) => false
+    case (Cons(h1, t1), Cons(h2, t2)) =>
+      if (h1 == h2)
+        isPrefix(t1, t2)
+      else
+        hasSubsequence(t1, sub)
+  }
 }
