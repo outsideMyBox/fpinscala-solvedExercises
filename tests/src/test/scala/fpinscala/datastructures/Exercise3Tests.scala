@@ -11,7 +11,7 @@ class Exercise3Tests {
 
   @Test 
   def testExercise_3_01() {		// match
-	  assertEquals(List.resultOfMatchExpression, 3)
+	  assertEquals(3, List.resultOfMatchExpression)
   }
 
   // ------------------ List ------------------------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ class Exercise3Tests {
   @Test 
   def testExercise_3_02() {		// tail
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.tail(l1), List(2,3,4,5))
+	  assertEquals(List(2,3,4,5), List.tail(l1))
 
 	  val l2 = List()
 	  try {
@@ -28,7 +28,7 @@ class Exercise3Tests {
 	  }
 	  catch {
 	  	case ex: RuntimeException => // expected
-	  	case _ => fail("tail of empty list - test failed")
+	  	case _: Throwable => fail("tail of empty list - test failed")
 	  }
 
 	  val l3 = List()
@@ -38,14 +38,14 @@ class Exercise3Tests {
 	  }
 	  catch {
 	  	case ex: RuntimeException => // expected
-	  	case _ => fail("tail of empty list - test failed")
+	  	case _: Throwable => fail("tail of empty list - test failed")
 	  }
   }
 
   @Test 
   def testExercise_3_03() {		// setHead
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.setHead(l1, 99), List(99, 2,3,4,5))
+	  assertEquals(List(99, 2,3,4,5), List.setHead(l1, 99))
 
 	  val l2 = List()
 	  try {
@@ -54,7 +54,7 @@ class Exercise3Tests {
 	  }
 	  catch {
 	  	case ex: RuntimeException => // expected
-	  	case _ => fail("setHead of empty list - test failed")
+	  	case _: Throwable => fail("setHead of empty list - test failed")
 	  }
 	  
 	  val l3 = Nil
@@ -64,50 +64,50 @@ class Exercise3Tests {
 	  }
 	  catch {
 	  	case ex: RuntimeException => // expected
-	  	case _ => fail("setHead of empty list - test failed")
+	  	case _: Throwable => fail("setHead of empty list - test failed")
 	  }
   }
 
   @Test 
   def testExercise_3_04() {		// drop
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.drop(l1, 0), List(1,2,3,4,5))
+	  assertEquals(List(1,2,3,4,5), List.drop(l1, 0))
 
   	  val l2 = List(1,2,3,4,5)
-	  assertEquals(List.drop(l2, 1), List(2,3,4,5))
+	  assertEquals(List(2,3,4,5), List.drop(l2, 1))
 
   	  val l3 = List(1,2,3,4,5)
-	  assertEquals(List.drop(l3, 5), Nil)
+	  assertEquals(Nil, List.drop(l3, 5))
 
   	  val l4 = List(1,2,3,4,5)
-	  assertEquals(List.drop(l4, 6), Nil)
+	  assertEquals(Nil, List.drop(l4, 6))
 	  
   	  val l5 = Nil
-	  assertEquals(List.drop(l5, 99), Nil)
+	  assertEquals(Nil, List.drop(l5, 99))
   }
 
   @Test 
   def testExercise_3_05() {		// dropWhile
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.dropWhile(l1, ((x:Int) => x<4)), List(4,5))
+	  assertEquals(List(4,5), List.dropWhile(l1, ((x:Int) => x<4)))
 
   	  val l2 = List(1,2,3,4,5)
-	  assertEquals(List.dropWhile(l2, ((x:Int) => x<6)), Nil)
+	  assertEquals(Nil, List.dropWhile(l2, ((x:Int) => x<6)))
 
   	  val l3 = List(1,2,3,4,5)
-	  assertEquals(List.dropWhile(l3, ((x:Int) => x<1)), List(1,2,3,4,5))
+	  assertEquals(List(1,2,3,4,5), List.dropWhile(l3, ((x:Int) => x<1)))
 
   	  val l4 = Nil
-	  assertEquals(List.dropWhile(l4, ((x:Int) => x<99)), Nil)
+	  assertEquals(Nil, List.dropWhile(l4, ((x:Int) => x<99)))
   }
 
   @Test 
   def testExercise_3_06() {		// init
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.init(l1), List(1,2,3,4))
+	  assertEquals(List(1,2,3,4), List.init(l1))
 
 	  val l2 = List(1)
-	  assertEquals(List.init(l2), Nil)
+	  assertEquals(Nil, List.init(l2))
 
 	  val l3 = Nil
 	  try {
@@ -116,7 +116,7 @@ class Exercise3Tests {
 	  }
 	  catch {
 	  	case ex: RuntimeException => // expected
-	  	case _ => fail("init of empty list - test failed")
+	  	case _: Throwable => fail("init of empty list - test failed")
 	  }
   }
 
@@ -128,19 +128,19 @@ class Exercise3Tests {
   @Test 
   def testExercise_3_08() {	// returns the original list, right?
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.foldRight(l1, Nil: List[Int])(Cons(_,_)), l1)
+	  assertEquals(l1, List.foldRight(l1, Nil: List[Int])(Cons(_,_)))
   }
 
   @Test 
   def testExercise_3_09() {	// length via foldRight
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.length(l1), 5)
+	  assertEquals(5, List.length(l1))
 	  
 	  val l2 = List(1)
-	  assertEquals(List.length(l2), 1)
+	  assertEquals(1, List.length(l2))
 	  
 	  val l3 = Nil
-	  assertEquals(List.length(l3), 0)
+	  assertEquals(0, List.length(l3))
   }
 
   @Test 
@@ -168,27 +168,27 @@ class Exercise3Tests {
   def testExercise_3_11() {		// sum, product and length via foldLeft
   	  val l1 = List(1,2,3,4,5)  
   	  val s = List.sum2(l1)
-  	  assertEquals(s, 15)
+  	  assertEquals(15, s)
   	  
   	  val l2 = List(1.0,2.0,3.0,4.0,5.0)
   	  val p = List.product2(l2)
-  	  assertEquals(p, 120.0, 0.00001)
+  	  assertEquals(120.0, p, 0.00001)
   	  
   	  val l3 = List(1,2,3,4,5)  
   	  val l = List.length2(l3)
-  	  assertEquals(l, 5)  	  
+  	  assertEquals(5, l)
   }
 
   @Test 
   def testExercise_3_12() {		// reverse
 	  val l1 = List(1,2,3,4,5)
-  	  assertEquals(List.reverse(l1), List(5,4,3,2,1))
+  	  assertEquals(List(5,4,3,2,1), List.reverse(l1))
   	  
 	  val l2 = List(1)
-  	  assertEquals(List.reverse(l2), l2)
+  	  assertEquals(l2, List.reverse(l2))
   	  
 	  val l3 = Nil
-  	  assertEquals(List.reverse(l3), Nil)
+  	  assertEquals(Nil, List.reverse(l3))
   }
 
   @Test 
@@ -223,163 +223,184 @@ class Exercise3Tests {
   @Test 
   def testExercise_3_14() {		// append
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.append(l1, List(99)), List(1,2,3,4,5,99))
+	  assertEquals(List(1,2,3,4,5,99), List.append(l1, List(99)))
+	  assertEquals(List(1,2,3,4,5,99), List.appendViaFoldRight(l1, List(99)))
+	  assertEquals(List(1,2,3,4,5,99), List.appendViaFoldLeft(l1, List(99)))
 	  
 	  val l2 = List(1)
-	  assertEquals(List.append(l2, List(99)), List(1, 99))
+	  assertEquals(List(1, 99), List.append(l2, List(99)))
+	  assertEquals(List(1, 99), List.appendViaFoldRight(l2, List(99)))
+	  assertEquals(List(1, 99), List.appendViaFoldLeft(l2, List(99)))
 	  
 	  val l3 = Nil
-	  assertEquals(List.append(l3, List(99)), List(99))
+	  assertEquals(List(99), List.append(l3, List(99)))
+	  assertEquals(List(99), List.appendViaFoldRight(l3, List(99)))
+	  assertEquals(List(99), List.appendViaFoldLeft(l3, List(99)))
 
   	  val l4 = List(1,2,3,4,5)
-	  assertEquals(List.append(l1, Nil), l4)
+	  assertEquals(l4, List.append(l4, Nil))
+	  assertEquals(l4, List.appendViaFoldRight(l4, Nil))
+	  assertEquals(l4, List.appendViaFoldLeft(l4, Nil))
 	  
 	  val l5 = List()
-	  assertEquals(List.append(l5, Nil), l5)
+	  assertEquals(l5, List.append(l5, Nil))
+	  assertEquals(l5, List.appendViaFoldRight(l5, Nil))
+	  assertEquals(l5, List.appendViaFoldLeft(l5, Nil))
 	  
 	  val l6 = Nil
-	  assertEquals(List.append(l6, Nil), l6)
+	  assertEquals(l6, List.append(l6, Nil))
+	  assertEquals(l6, List.appendViaFoldRight(l6, Nil))
+	  assertEquals(l6, List.appendViaFoldLeft(l6, Nil))
   }
 
   @Test 
   def testExercise_3_15() {		// concat
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.concat(List(l1, List(99))), List(1,2,3,4,5,99))
+	  assertEquals(List(1,2,3,4,5,99), List.concat(List(l1, List(99))))
 	  
 	  val l2 = List(1)
-	  assertEquals(List.concat(List(l2, List(99))), List(1, 99))
+	  assertEquals(List(1, 99), List.concat(List(l2, List(99))))
 	  
 	  val l3 = Nil
-	  assertEquals(List.concat(List(l3, List(99))), List(99))
+	  assertEquals(List(99), List.concat(List(l3, List(99))))
 
 	  val l4 = List(1,2,3,4,5)
-	  assertEquals(List.concat(List(l1, List(99), Nil)), List(1,2,3,4,5,99))
+	  assertEquals(List(1,2,3,4,5,99), List.concat(List(l1, List(99), Nil)))
 	  
 	  val l5 = List(1)
-	  assertEquals(List.concat(List(l2, List(99), List(0))), List(1, 99, 0))
+	  assertEquals(List(1, 99, 0), List.concat(List(l2, List(99), List(0))))
 	  
 	  val l6 = Nil
-	  assertEquals(List.concat(List(l3, List(99), Nil, Nil)), List(99))
+	  assertEquals(List(99), List.concat(List(l3, List(99), Nil, Nil)))
   }
 
   @Test 
   def testExercise_3_16() {		// add one 
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.add1(l1), List(2,3,4,5,6))
+	  assertEquals(List(2,3,4,5,6), List.add1(l1))
 	  
 	  val l2 = List(1)
-	  assertEquals(List.add1(l2), List(2))
+	  assertEquals(List(2), List.add1(l2))
 	  
 	  val l3 = Nil
-	  assertEquals(List.add1(l3), Nil)  
+	  assertEquals(Nil, List.add1(l3))
   }
 
   @Test 
   def testExercise_3_17() {		// convert to String
 	  val l1 = List(1.0,2.0,3.0,4.0,5.0)
-	  assertEquals(List.doubleToString(l1), List("1.0","2.0","3.0","4.0","5.0"))
+	  assertEquals(List("1.0","2.0","3.0","4.0","5.0"), List.doubleToString(l1))
 	  
 	  val l2 = List(1.0)
-	  assertEquals(List.doubleToString(l2), List("1.0"))
+	  assertEquals(List("1.0"), List.doubleToString(l2))
 	  
 	  val l3 = Nil
-	  assertEquals(List.doubleToString(l3), Nil)  
+	  assertEquals(Nil, List.doubleToString(l3))  
   }
 
   @Test 
   def testExercise_3_18() {		// map
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.map(l1)(x => x+1), List(2,3,4,5,6))
+	  assertEquals(List(2,3,4,5,6), List.map(l1)(x => x+1))
 	  
 	  val l2 = List(1)
-	  assertEquals(List.map(l2)(x => x+1), List(2))
+	  assertEquals(List(2), List.map(l2)(x => x+1))
 	  
 	  val l3 = List[Int]()
-	  assertEquals(List.map(l3)(x => x+1), Nil)  
+	  assertEquals(Nil, List.map(l3)(x => x+1))
     	  
 	  val l4 = List(1.0,2.0,3.0,4.0,5.0)
-	  assertEquals(List.map(l4)(x => "" + x), List("1.0","2.0","3.0","4.0","5.0"))
+	  assertEquals(List("1.0","2.0","3.0","4.0","5.0"), List.map(l4)(x => "" + x))
 	  
 	  val l5 = List(1.0)
-	  assertEquals(List.map(l5)(x => "" + x), List("1.0"))
+	  assertEquals(List("1.0"), List.map(l5)(x => "" + x))
 	  
 	  val l6 = Nil
-	  assertEquals(List.map(l6)(x => "" + x), Nil)  
+	  assertEquals(Nil, List.map(l6)(x => "" + x))  
   }
 
   @Test 
   def testExercise_3_19() {		// filter
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.filter(l1)(x => (x%2)==0), List(2,4))
+	  assertEquals(List(2,4), List.filter(l1)(x => (x%2)==0))
 
 	  val l2 = List(1)
-	  assertEquals(List.filter(l2)(x => x<2), l2)
+	  assertEquals(l2, List.filter(l2)(x => x<2))
 	  
 	  val l3 = List[Int]()
-	  assertEquals(List.filter(l3)(x => (x%2)!=0), Nil)  
+	  assertEquals(Nil, List.filter(l3)(x => (x%2)!=0))  
     	  
 	  val l4 = List(1.0,2.0,3.0,4.0,5.0)
-	  assertEquals(List.filter(l4)(x => (x%2)==0), List(2.0,4.0))
+	  assertEquals(List(2.0,4.0), List.filter(l4)(x => (x%2)==0))
 	  
 	  val l5 = List(1.0)
-	  assertEquals(List.filter(l5)(x => (x%2)==0), Nil)  
+	  assertEquals(Nil, List.filter(l5)(x => (x%2)==0))  
 	  
 	  val l6 = List[Int]()
-	  assertEquals(List.filter(l6)(x => (x%2)==0), Nil)  
+	  assertEquals(Nil, List.filter(l6)(x => (x%2)==0))  
   }
 
   @Test 
   def testExercise_3_20() {		// flat map
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.flatMap(l1)(x => List(x,x)), List(1,1,2,2,3,3,4,4,5,5))
+	  assertEquals(List(1,1,2,2,3,3,4,4,5,5), List.flatMap(l1)(x => List(x,x)))
 	  
 	  val l2 = List(1)
-	  assertEquals(List.flatMap(l2)(x => List(x+1, x+1)), List(2,2))
+	  assertEquals(List(2,2), List.flatMap(l2)(x => List(x+1, x+1)))
 	  
 	  val l3 = List[Int]()
-	  assertEquals(List.flatMap(l3)(x => Nil), Nil)  
+	  assertEquals(Nil, List.flatMap(l3)(x => Nil))  
   }
 
   @Test 
   def testExercise_3_21() {		// filter via flat map
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.filterViaFlatMap(l1)(x => (x%2)==0), List(2,4))
+	  assertEquals(List(2,4), List.filterViaFlatMap(l1)(x => (x%2)==0))
 
 	  val l2 = List(1)
-	  assertEquals(List.filterViaFlatMap(l2)(x => x<2), l2)
+	  assertEquals(l2, List.filterViaFlatMap(l2)(x => x<2))
 	  
 	  val l3 = List[Int]()
-	  assertEquals(List.filterViaFlatMap(l3)(x => (x%2)!=0), Nil)  
+	  assertEquals(Nil, List.filterViaFlatMap(l3)(x => (x%2)!=0))  
     	  
 	  val l4 = List(1.0,2.0,3.0,4.0,5.0)
-	  assertEquals(List.filterViaFlatMap(l4)(x => (x%2)==0), List(2.0,4.0))
+	  assertEquals(List(2.0,4.0), List.filterViaFlatMap(l4)(x => (x%2)==0))
 	  
 	  val l5 = List(1.0)
-	  assertEquals(List.filterViaFlatMap(l5)(x => (x%2)==0), Nil)  
+	  assertEquals(Nil, List.filterViaFlatMap(l5)(x => (x%2)==0))  
 	  
 	  val l6 = List[Int]()
-	  assertEquals(List.filterViaFlatMap(l6)(x => (x%2)==0), Nil)  
+	  assertEquals(Nil, List.filterViaFlatMap(l6)(x => (x%2)==0))
   }
 
   @Test 
   def testExercise_3_22() {		// add pair wise
 	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.addPairwise(l1, l1), List(2,4,6,8,10))
-  	  assertEquals(List.addPairwise(l1, Nil), Nil)
+	  assertEquals(List(2,4,6,8,10), List.addPairwise(l1, l1))
+  	  assertEquals(l1, List.addPairwise(l1, Nil))
 
 	  val l2 = List[Int]()
-	  assertEquals(List.addPairwise(l2, l2), Nil)
+	  assertEquals(Nil, List.addPairwise(l2, l2))
+
+	  val l3 = List(1,2,3,4,5)
+	  val l4 = List(99,98,97,96,95)
+	  assertEquals(List(100,100,100,100,100), List.addPairwise(l3, l4))
   }
 
   @Test 
   def testExercise_3_23() {		// zipWith
   	  val l1 = List(1,2,3,4,5)
-	  assertEquals(List.zipWith(l1, l1)((x,y) => x+y), List(2,4,6,8,10))
-	  assertEquals(List.zipWith(l1, l1)((x,y) => x*y), List(1,4,9,16,25))
-  	  assertEquals(List.zipWith(l1, List[Int]())((x,y) => x+y), Nil)
+	  assertEquals(List(2,4,6,8,10), List.zipWith(l1, l1)((x,y) => x+y))
+	  assertEquals(List(1,4,9,16,25), List.zipWith(l1, l1)((x,y) => x*y))
+  	  assertEquals(Nil, List.zipWith(l1, List[Int]())((x,y) => x+y))
   	  
 	  val l2 = List[Int]()
-	  assertEquals(List.zipWith(l2, l2)((x,y) => x+y), Nil)
+	  assertEquals(Nil, List.zipWith(l2, l2)((x,y) => x+y))
+
+  	  val l3 = List(1,2,3,4,5)
+	  val l4 = List(99,98,97,96,95)
+	  assertEquals(List(100,100,100,100,100), List.zipWith(l3, l4)((x,y) => x+y))
+	  assertEquals(List(98,96,94,92,90), List.zipWith(l3, l4)((x,y) => Math.abs(x-y)))
   }
 
   @Test 
@@ -399,39 +420,41 @@ class Exercise3Tests {
   @Test 
   def testExercise_3_25() {		// size
 	  val t1: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Leaf[Int](8)))
-	  assertEquals(Tree.size(t1), 7)
+	  assertEquals(7, Tree.size(t1))
 
 	  val t2: Tree[Int] = Leaf(99)
-	  assertEquals(Tree.size(t2), 1)
+	  assertEquals(1, Tree.size(t2))
   }
 
   @Test 
   def testExercise_3_26() {		// maximum
 	  val t1: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Leaf[Int](8)))
-	  assertEquals(Tree.maximum(t1), 8)
+	  assertEquals(8, Tree.maximum(t1))
 
 	  val t2: Tree[Int] = Leaf(99)
-	  assertEquals(Tree.maximum(t2), 99)
+	  assertEquals(99, Tree.maximum(t2))
   }
 
   @Test 
   def testExercise_3_27() {		// depth
 	  val t1: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Branch(Leaf[Int](8), Leaf[Int](9))))	  
-	  assertEquals(Tree.depth(t1), 3)
+	  assertEquals(3, Tree.depth(t1))
 
 	  val t2: Tree[Int] = Leaf(99)
-	  assertEquals(Tree.depth(t2), 0)
+	  assertEquals(0, Tree.depth(t2))
   }
 
   @Test 
   def testExercise_3_28() {		// map
 	  val t1: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Branch(Leaf[Int](8), Leaf[Int](9))))	  
 	  val mappedt1 = Tree.map(t1)((x: Int) => ""+x)
-	  assertEquals(mappedt1, Branch (Branch(Leaf[String]("5"), Leaf[String]("6")), Branch(Leaf[String]("7"), Branch(Leaf[String]("8"), Leaf[String]("9")))))
+	  assertEquals(
+	      Branch (Branch(Leaf[String]("5"), Leaf[String]("6")), Branch(Leaf[String]("7"), Branch(Leaf[String]("8"), Leaf[String]("9")))),
+	      mappedt1)
 
 	  val t2: Tree[Int] = Leaf(99)
 	  val mappedt2 = Tree.map(t2)((x: Int) => ""+x)
-	  assertEquals(mappedt2, Leaf("99"))
+	  assertEquals(Leaf("99"), mappedt2)
   }
 
   @Test 
@@ -439,28 +462,28 @@ class Exercise3Tests {
 	  def sizeViaFold[A](t: Tree[A]):   Int = Tree.fold(t)(a => 1)(1 + _ + _)
     	
       val t1: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Leaf[Int](8)))
-	  assertEquals(Tree.size(t1), 7)
-	  assertEquals(Tree.size(t1), sizeViaFold(t1))
+	  assertEquals(7, Tree.size(t1))
+	  assertEquals(sizeViaFold(t1), Tree.size(t1))
 	  val t2: Tree[Int] = Leaf(99)
-	  assertEquals(Tree.size(t2), 1)
-	  assertEquals(Tree.size(t2), sizeViaFold(t2))  
+	  assertEquals(1, Tree.size(t2))
+	  assertEquals(sizeViaFold(t2), Tree.size(t2))  
 
   	  def maximumViaFold(t: Tree[Int]): Int = Tree.fold(t)(a => a)(_ max _)
   	  
 	  val t3: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Leaf[Int](8)))
-	  assertEquals(Tree.maximum(t3), 8)
-	  assertEquals(Tree.maximum(t3), maximumViaFold(t3))
+	  assertEquals(8, Tree.maximum(t3))
+	  assertEquals(maximumViaFold(t3), Tree.maximum(t3))
 	  val t4: Tree[Int] = Leaf(99)
-	  assertEquals(Tree.maximum(t4), 99)
-	  assertEquals(Tree.maximum(t4), maximumViaFold(t4))
+	  assertEquals(99, Tree.maximum(t4))
+	  assertEquals(maximumViaFold(t4), Tree.maximum(t4))
 	  
   	  def depthViaFold[A](t: Tree[A]):  Int = Tree.fold(t)(a => 0)((d1,d2) => 1 + (d1 max d2))
   	  
 	  val t5: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Branch(Leaf[Int](8), Leaf[Int](9))))	  
-	  assertEquals(Tree.depth(t5), 3)
-	  assertEquals(Tree.depth(t5), depthViaFold(t5))
+	  assertEquals(3, Tree.depth(t5))
+	  assertEquals(depthViaFold(t5), Tree.depth(t5))
 	  val t6: Tree[Int] = Leaf(99)
-	  assertEquals(Tree.depth(t6), 0)
-	  assertEquals(Tree.depth(t6), depthViaFold(t6))
+	  assertEquals(0, Tree.depth(t6))
+	  assertEquals(depthViaFold(t6), Tree.depth(t6))
   }
 }
