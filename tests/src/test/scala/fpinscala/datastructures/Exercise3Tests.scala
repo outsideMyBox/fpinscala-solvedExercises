@@ -441,10 +441,10 @@ class Exercise3Tests {
   @Test 
   def testExercise_3_27() {		// depth
 	  val t1: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Branch(Leaf[Int](8), Leaf[Int](9))))	  
-	  assertEquals(3, Tree.depth(t1))
+	  assertEquals(4, Tree.depth(t1))
 
 	  val t2: Tree[Int] = Leaf(99)
-	  assertEquals(0, Tree.depth(t2))
+	  assertEquals(1, Tree.depth(t2))
   }
 
   @Test 
@@ -462,31 +462,25 @@ class Exercise3Tests {
 
   @Test 
   def testExercise_3_29() {		// fold and size/maximum/depth via fold
-	  def sizeViaFold[A](t: Tree[A]):   Int = Tree.fold(t)(a => 1)(1 + _ + _)
-    	
       val t1: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Leaf[Int](8)))
 	  assertEquals(7, Tree.size(t1))
-	  assertEquals(sizeViaFold(t1), Tree.size(t1))
+	  assertEquals(Tree.size(t1), Tree.sizeViaFold(t1))
 	  val t2: Tree[Int] = Leaf(99)
 	  assertEquals(1, Tree.size(t2))
-	  assertEquals(sizeViaFold(t2), Tree.size(t2))  
-
-  	  def maximumViaFold(t: Tree[Int]): Int = Tree.fold(t)(a => a)(_ max _)
+	  assertEquals(Tree.size(t2), Tree.sizeViaFold(t2))  
   	  
 	  val t3: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Leaf[Int](8)))
 	  assertEquals(8, Tree.maximum(t3))
-	  assertEquals(maximumViaFold(t3), Tree.maximum(t3))
+	  assertEquals(Tree.maximum(t3), Tree.maximumViaFold(t3))
 	  val t4: Tree[Int] = Leaf(99)
 	  assertEquals(99, Tree.maximum(t4))
-	  assertEquals(maximumViaFold(t4), Tree.maximum(t4))
-	  
-  	  def depthViaFold[A](t: Tree[A]):  Int = Tree.fold(t)(a => 0)((d1,d2) => 1 + (d1 max d2))
+	  assertEquals(Tree.maximum(t4), Tree.maximumViaFold(t4))
   	  
 	  val t5: Tree[Int] = Branch (Branch(Leaf[Int](5), Leaf[Int](6)), Branch(Leaf[Int](7), Branch(Leaf[Int](8), Leaf[Int](9))))	  
-	  assertEquals(3, Tree.depth(t5))
-	  assertEquals(depthViaFold(t5), Tree.depth(t5))
+	  assertEquals(4, Tree.depth(t5))
+	  assertEquals(Tree.depth(t5), Tree.depthViaFold(t5))
 	  val t6: Tree[Int] = Leaf(99)
-	  assertEquals(0, Tree.depth(t6))
-	  assertEquals(depthViaFold(t6), Tree.depth(t6))
+	  assertEquals(1, Tree.depth(t6))
+	  assertEquals(Tree.depth(t6), Tree.depthViaFold(t6))
   }
 }
