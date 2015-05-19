@@ -7,6 +7,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
 
+/**
+ * @author martin.lehmann@gmx.de
+ */
 class Exercise3Tests {
 
   @Test 
