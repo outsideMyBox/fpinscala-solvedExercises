@@ -6,13 +6,19 @@ import scala.{Option => _, Some => _, Either => _, _} // hide std library `Optio
 sealed trait Option[+A] {
   
   // Exercise 4.1: map for Option
-  def map[B](f: A => B): Option[B] = ???
+  def map[B](f: A => B): Option[B] = this match {
+    case Some(a) => Some(f(a))
+    case None => None 
+  }
 
   // Exercise 4.1: flatMap for Option (without pattern matching).
-  def flatMap[B](f: A => Option[B]): Option[B] = ???
+  def flatMap[B](f: A => Option[B]): Option[B]= map(f) getOrElse None
   
   // Exercise 4.1: flatMap for Option (with pattern matching).
-  def flatMap_1[B](f: A => Option[B]): Option[B] = ???
+  def flatMap_1[B](f: A => Option[B]): Option[B] = this match {
+    case Some(a) => f(a)
+    case None => None
+  }
   
   // Exercise 4.1: getOrElse for Option.
   def getOrElse[B>:A](default: => B): B = ???
