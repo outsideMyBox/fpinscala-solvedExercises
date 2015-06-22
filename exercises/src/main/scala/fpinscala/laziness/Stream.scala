@@ -108,13 +108,6 @@ object Stream {
   // Exercise 5.11: unfold.
   def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
   
-  // Exercise 5.11: unfold via fold
-  //def unfoldViaFold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
-
-  // Exercise 5.11: unfold via fold
-  //def unfoldViaFold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
-  // def unfoldViaMap[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
-  
   // Exercise 5.12: fibs, from, constant , and ones in terms of unfold.
   def fibsViaUnfold: Stream[Int] = ???
   
