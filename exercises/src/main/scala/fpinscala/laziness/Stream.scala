@@ -69,7 +69,7 @@ trait Stream[+A] {
   // Exercise 5.13: zipAll via unfold.
   def zipAll[B](s2: Stream[B]): Stream[(Option[A],Option[B])] = ???  
   
-  // Exercise 5.14: startWith via unfold.
+  // Exercise 5.14: startWith.
   def startsWith[B](s: Stream[B]): Boolean = ???
   
   // Exercise 5.15: tails via unfold.

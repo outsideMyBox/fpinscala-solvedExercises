@@ -295,7 +295,6 @@ class StreamSpec extends Specification with DataTables {
         Stream('a', 'b', 'c') !! Stream(Stream('a', 'b', 'c'), Stream('b', 'c'), Stream('c'), Stream()) |
         Stream('a', 'b', 'c', 'd') !! Stream(Stream('a', 'b', 'c', 'd'), Stream('b', 'c', 'd'), Stream('c', 'd'), Stream('d'), Stream()) |> {
           (stream, result) =>
-            println(">>>" + stream.tails.toList.map(_.toList))
             stream.tails.toList.map(_.toList) must_== result.toList.map(_.toList)
         }
     }
