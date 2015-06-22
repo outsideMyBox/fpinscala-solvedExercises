@@ -10,7 +10,8 @@ object FPInScalaBuild extends Build {
 //    scalacOptions ++= Seq(
 //      "-deprecation",
 //      "-unchecked"),
-    resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+    resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+    resolvers += "Bintray  Repository" at "http://dl.bintray.com/scalaz/releases/"
   )
   
  
