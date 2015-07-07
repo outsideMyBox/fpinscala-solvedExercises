@@ -27,7 +27,7 @@ sealed trait Option[+A] {
   }
 
   // Exercise 4.1: orElse for Option (without pattern matching).
-  def orElse[B >: A](ob: => Option[B]): Option[B] = map(sa => Some(sa)).getOrElse(ob)
+  def orElse[B >: A](ob: => Option[B]): Option[B] = map(a => Some(a)).getOrElse(ob)
 
   // Exercise 4.1: orElse for Option (with pattern matching).
   def orElse_1[B >: A](ob: => Option[B]): Option[B] = this match {
@@ -72,6 +72,7 @@ object Option {
   // Exercise 4.2: variance.
   def variance(xs: Seq[Double]): Option[Double] =
     mean(xs) map (m => xs.map(x => math.pow(x - m, 2)).sum / xs.length)
+    //mean(xs) flatMap (m => mean(xs.map(x => math.pow(x - m, 2))))
 
   // Exercise 4.3: map2.
   def map2[A, B, C](oa: Option[A], ob: Option[B])(f: (A, B) => C): Option[C] =

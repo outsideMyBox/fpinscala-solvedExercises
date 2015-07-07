@@ -27,6 +27,7 @@ trait Stream[+A] {
 
   def toList: List[A] = {
     val buf = new collection.mutable.ListBuffer[A]
+    @tailrec
     def toList0(stream: Stream[A]): List[A] = {
       stream match {
         case Cons(h, t) => {
