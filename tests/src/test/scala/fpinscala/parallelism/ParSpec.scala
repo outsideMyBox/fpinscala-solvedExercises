@@ -7,6 +7,7 @@ import org.specs2.runner.JUnitRunner
 import org.junit.runner.RunWith
 import java.util.concurrent._
 import org.specs2.matcher.Matcher
+import fpinscala.parallelism.Utils._
 
 @RunWith(classOf[JUnitRunner])
 class ParSpec extends Specification with DataTables {
@@ -16,42 +17,12 @@ class ParSpec extends Specification with DataTables {
   //val maxNbOfThreadsInTests = 8
   //val es = Executors.newFixedThreadPool(maxNbOfThreadsInTests)
   val es = Executors.newCachedThreadPool()
-
-  // Concrete classes for the generic types A, B and C.
-  sealed class ConcreteType(a: String) {}
-  case class CA(val a: String) extends ConcreteType(a)
-  case class CB(val b: String) extends ConcreteType(b)
-  case class CC(val c: String) extends ConcreteType(c)
-
-  case class CallableCA(durationMillis: Long, value: String = "") extends Callable[CA] {
-    def call(): CA = {
-      Thread.sleep(durationMillis)
-      CA(s"${value}${durationMillis}ms")
-    }
-  }
-
-  case class CallableCB(durationMillis: Long, value: String = "") extends Callable[CB] {
-    def call(): CB = {
-      Thread.sleep(durationMillis)
-      CB(s"${value}${durationMillis}ms")
-    }
-  }
-
-  // Predefined durations
-  val durationPrecision = 0.1 // 10%. 
-  val d1 = 100L
-  val d2 = d1 * 2
-  val d3 = d2 * 2
-  val tooLongDuration = d3 * 1000000 // For threads that are not supposed to run. 
-
-  // Test if a duration is in an interval.
+  
+    // Test if a duration is in an interval.
   def be_around(duration: Long, dp: Double = durationPrecision): Matcher[Long] = {
     val i = (duration * dp).toLong
     be_>(duration - i) and be_<(duration + i)
   }
-
-  def safeMaxFor(duration: Long) = (duration * (1 + durationPrecision)).toLong
-  def safeMinFor(duration: Long) = (duration * (1 - durationPrecision)).toLong
 
   "The following exercises should be correct" >> {
 
