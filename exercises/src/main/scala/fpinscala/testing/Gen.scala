@@ -41,30 +41,39 @@ object Gen {
 
   // Exercise 8.5: unit  
   def unit[A](a: => A): Gen[A] = ???
-  
+
   // Exercise 8.5: boolean
   val boolean: Gen[Boolean] = ???
 
   // Exercise 8.5: listOfN
   def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = ???
-  
+
+  // Exercise 8.7: union
+  def union[A](g1: Gen[A], g2: Gen[A]): Gen[A] = ???
+
+  // Exercise 8.8: weighted  
+  def weighted[A](g1: (Gen[A], Double), g2: (Gen[A], Double)): Gen[A] = ???
+
 }
 
 case class Gen[+A](sample: State[RNG, A]) {
-  
+
   def map[A, B](f: A => B): Gen[B] = ???
 
   // Exercise 8.6: flatMap  
-  def flatMap[A, B](f: A => Gen[B]): Gen[B] = ???
-  
+  def flatMap[B](f: A => Gen[B]): Gen[B] = ???
+
   // Exercise 8.6: listOfN
-  def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = ???
+  def listOfN(size: Gen[Int]): Gen[List[A]] = ???
 }
 
 //trait Gen[A] {
 //  def map[A, B](f: A => B): Gen[B] = ???
 //  def flatMap[A, B](f: A => Gen[B]): Gen[B] = ???
 //}
+
+
+
 
 trait SGen[+A] {
 
