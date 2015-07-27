@@ -29,6 +29,8 @@ class GenSpec extends Specification with DataTables {
     go(count, List(), rng)
   }
 
+  val seed = RNG.Simple(seedInt)
+
   "The following exercises should be correct" >> {
 
     "Exercise 8.3: &&" in {
@@ -54,7 +56,6 @@ class GenSpec extends Specification with DataTables {
         MAX_VALUE - 2 !! MAX_VALUE !! List(2147483646, 2147483645, 2147483645, 2147483645) |> {
           (start, stopExclusive, expected) =>
             val gen = Gen.choose(start, stopExclusive)
-            val seed = RNG.Simple(seedInt)
             val (ints1, rng1) = sequenceFromTest(4)(seed)(gen.sample.run)
             val ints2 = sequenceFromTest(1000)(rng1)(gen.sample.run)._1
             (ints1 must_== expected) and
@@ -64,7 +65,6 @@ class GenSpec extends Specification with DataTables {
 
     "Exercise 8.5: unit" in {
       val gen = Gen.unit("unit")
-      val seed = RNG.Simple(seedInt)
       val (units1, rng) = sequenceFromTest(10)(seed)(gen.sample.run)
       val units2 = sequenceFromTest(10)(rng)(gen.sample.run)._1
       units1.union(units2) forall (_ == "unit") must beTrue
@@ -72,7 +72,6 @@ class GenSpec extends Specification with DataTables {
 
     "Exercise 8.5: boolean" in {
       val gen = Gen.boolean
-      val seed = RNG.Simple(seedInt)
       val (booleans1, rng) = sequenceFromTest(3)(seed)(gen.sample.run)
       val booleans2 = sequenceFromTest(4)(rng)(gen.sample.run)._1
       (booleans1 must_== List(false, true, true)) and
@@ -82,7 +81,6 @@ class GenSpec extends Specification with DataTables {
     "Exercise 8.5: listOfN" in {
       val start = -2
       val stopExclusive = 2
-      val seed = RNG.Simple(seedInt)
       val listSize = 100
       val gen = Gen.listOfN(listSize, Gen.choose(start, stopExclusive))
       val (ints1, rng) = gen.sample.run(seed)
@@ -97,7 +95,6 @@ class GenSpec extends Specification with DataTables {
       val nbLetterGen = Gen.choose(1, 10)
       val f = (nbInts: Int) => Gen.listOfN(nbInts, Gen.choose(10, 15))
       val wordGen = nbLetterGen.flatMap(f)
-      val seed = RNG.Simple(seedInt)
       val (res1, rng1) = wordGen.sample.run(seed)
       val (res2, rng2) = wordGen.sample.run(rng1)
       val res3 = wordGen.sample.run(rng2)._1
@@ -119,7 +116,6 @@ class GenSpec extends Specification with DataTables {
       val genF = Gen.unit(false)
       val genT = Gen.unit(true)
       val gen = Gen.union(genF, genT)
-      val seed = RNG.Simple(seedInt)
       val booleans = sequenceFromTest(nbTests)(seed)(gen.sample.run)._1
       val percentError = 2
       val margin = nbTests * percentError / 100
@@ -146,7 +142,6 @@ class GenSpec extends Specification with DataTables {
             val falseGen = Gen.unit(false)
             val trueGen = Gen.unit(true)
             val weightedGen = Gen.weighted((falseGen, falseWeight), (trueGen, trueWeight))
-            val seed = RNG.Simple(seedInt)
             val booleans = sequenceFromTest(nbTests)(seed)(weightedGen.sample.run)._1
             val falseNb = booleans.filter(_ == false).size
             val trueNb = booleans.filter(_ == true).size
@@ -158,6 +153,102 @@ class GenSpec extends Specification with DataTables {
               (trueNb must beGreaterThan(expectedTrueNb - margin)) and
               (trueNb must beLessThan(expectedTrueNb + margin))
         }
+    }
+
+    "Exercise 8.9: &&" in {
+      import fpinscala.testing.Prop._
+      def runFalsified1(maxSize: MaxSize, testCases: TestCases, rng: RNG): Result = Falsified("test1 ko", 1)
+      def runFalsified2(maxSize: MaxSize, testCases: TestCases, rng: RNG): Result = Falsified("test2 ko", 2)
+      def runPassed(maxSize: MaxSize, testCases: TestCases, rng: RNG): Result = Passed
+
+      val propFalse1 = new Prop(runFalsified1)
+      val propFalse2 = new Prop(runFalsified2)
+      val propTrue = new Prop(runPassed)
+
+      "propA" || "proB" || "expected result" |
+        propFalse1 !! propFalse2 !! propFalse1 |
+        propFalse2 !! propFalse1 !! propFalse2 |
+        propFalse1 !! propTrue !! propFalse1 |
+        propTrue !! propFalse1 !! propFalse1 |
+        propTrue !! propTrue !! propTrue |> {
+          (propA, propB, expected) =>
+            (propA && propB).run(1, 1, seed) must_== expected.run(1, 1, seed)
+        }
+    }
+
+    "Exercise 8.9: ||" in {
+      import fpinscala.testing.Prop._
+      def runFalsified1(maxSize: MaxSize, testCases: TestCases, rng: RNG): Result = Falsified("test1 ko", 1)
+      def runFalsified2(maxSize: MaxSize, testCases: TestCases, rng: RNG): Result = Falsified("test2 ko", 2)
+      def runFalsified1Or2(maxSize: MaxSize, testCases: TestCases, rng: RNG): Result = Falsified("test1 ko\ntest2 ko", 2)
+      def runPassed(maxSize: MaxSize, testCases: TestCases, rng: RNG): Result = Passed
+
+      val propFalse1 = new Prop(runFalsified1)
+      val propFalse2 = new Prop(runFalsified2)
+      val propFalse1Or2 = new Prop(runFalsified1Or2)
+      val propTrue = new Prop(runPassed)
+
+      "propA" || "proB" || "expected result" |
+        propFalse1 !! propFalse2 !! propFalse1Or2 |
+        propFalse1 !! propTrue !! propTrue |
+        propTrue !! propFalse1 !! propTrue |
+        propTrue !! propTrue !! propTrue |> {
+          (propA, propB, expected) =>
+            (propA || propB).run(1, 1, seed) must_== expected.run(1, 1, seed)
+        }
+    }
+
+    "Exercise 8.10: unsized" in {
+      val gen = Gen.boolean
+      val sgen = gen.unsized
+      (sgen(0) must_== gen) and (sgen(42) must_== gen)
+    }
+
+    "Exercise 8.11: convenience functions (map)" in {
+      def g(i: Int) = Gen.choose(1, i)
+      val sgen = SGen(g)
+      val stringSGen = sgen.map(i => "x" * i)
+      val maxLength = 6
+      val xes = sequenceFromTest(1000)(seed)(stringSGen(maxLength + 1).sample.run)._1
+      xes.forall { string => (string.toSet == Set('x')) && (string.size <= maxLength) } must beTrue
+    }
+
+    "Exercise 8.11: convenience functions (flatMap)" in {
+      val minListLength = 6
+      val maxListLength = 12
+      def g(i: Int) = Gen.choose(minListLength, i)
+      val sgen = SGen(g)
+      def f(i: Int) = Gen.listOfN(i, Gen.choose(10, 20))
+      val listOfLists = sequenceFromTest(1000)(seed)(sgen.flatMap(f)(maxListLength + 1).sample.run)._1
+      (listOfLists.forall(_.size >= minListLength) must beTrue) and
+        (listOfLists.forall(_.size <= maxListLength) must beTrue) and
+        (listOfLists.forall(_.forall(elt => (elt >= 10) && (elt < 20))) must beTrue)
+    }
+
+    "Exercise 8.12: listOf" in {
+      val sgen = Gen.listOf(Gen.unit(42))
+      sgen(4).sample.run(seed)._1 must_== List(42, 42, 42, 42)
+    }
+
+    "Exercise 8.13: listOf1" in {
+      val sgen1 = Gen.listOf1(Gen.choose(10, 20))
+      val listOfLists = sequenceFromTest(10)(seed)(sgen1(0).sample.run)._1
+      println(listOfLists)
+      listOfLists.forall(_.size == 1) must beTrue
+    }
+
+    // The validity of maxProp1 is not really tested here!!
+    "Exercise 8.13: maxProp with listOf1" in {
+      val prop = Gen.maxProp1
+      val result = prop.run(100, 100, seed)
+      result.isFalsified must beFalse
+    }
+
+    // The validity of sortedProp is not really tested here!!
+    "Exercise 8.14: sortedProp" in {
+      val prop = Gen.sortedProp
+      val result = prop.run(100, 100, seed)
+      result.isFalsified must beFalse
     }
 
   }
