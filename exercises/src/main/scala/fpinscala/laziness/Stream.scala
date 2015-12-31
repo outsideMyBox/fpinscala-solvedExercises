@@ -134,16 +134,17 @@ trait Stream[+A] {
       case _                            => None
     }
 
-  // Exercise 5.14: startWith.
+  // special case of `zip`
+  def zip[B](s2: Stream[B]): Stream[(A,B)] =
+    zipWith(s2)((_,_))  
+  
+   // Exercise 5.14: startWith.
   def startsWith1[B](s: Stream[B]): Boolean =
     (this, s) match {
       case (_, Empty) => true
       case (Cons(h1, t1), Cons(h2, t2)) if h1() == h2() => t1().startsWith1(t2())
       case _ => false
     }
-
-  def startsWith[B](s: Stream[B]): Boolean =
-    zipAll(s) takeWhile (!_._2.isEmpty) forAll { case (h1, h2) => h1 == h2 }
 
   // Exercise 5.15: tails via unfold.
   def tails: Stream[Stream[A]] =

@@ -10,6 +10,7 @@ import org.junit.runner.RunWith
 class StateSpec extends Specification with DataTables {
 
   // TODO: Update tests to test limits and be more rigorous about the different cases (e.g. test real values).
+  //       or even use property testing instead.
 
   type Rand[+A] = RNG => (A, RNG)
 
@@ -46,21 +47,21 @@ class StateSpec extends Specification with DataTables {
 
     "Exercise 6.3: intDouble." in {
       val seed = RNG.Simple(340707234)
-      val results = sequenceFromTest(1000)(seed)(RNG.intDouble)._1
+      val results:List[(Int, Double)] = sequenceFromTest(1000)(seed)(RNG.intDouble)._1
       val (ints, doubles) = results.unzip { case ((a, b)) => (a, b) }
       (ints.distinct.isEmpty must_== false) and (doubles.distinct.isEmpty must_== false)
     }
 
     "Exercise 6.3: doubleInt." in {
       val seed = RNG.Simple(340707234)
-      val results = sequenceFromTest(1000)(seed)(RNG.doubleInt)._1
-      val (ints, doubles) = results.unzip { case ((a, b)) => (a, b) }
-      (ints.distinct.isEmpty must_== false) and (doubles.distinct.isEmpty must_== false)
+      val results:List[(Double, Int)] = sequenceFromTest(1000)(seed)(RNG.doubleInt)._1
+      val (doubles, ints) = results.unzip { case ((a, b)) => (a, b) }
+      (doubles.distinct.isEmpty must_== false) and (ints.distinct.isEmpty must_== false)
     }
 
     "Exercise 6.3: double3." in {
       val seed = RNG.Simple(340707234)
-      val results = sequenceFromTest(50)(seed)(RNG.double3)._1
+      val results:List[(Double, Double, Double)] = sequenceFromTest(50)(seed)(RNG.double3)._1
       val (d1, d2, d3) = results.unzip3 { case ((a, b, c)) => (a, b, c) }
       (d1.distinct.isEmpty must_== false) and (d2.distinct.isEmpty must_== false) and
         (d3.distinct.isEmpty must_== false) and (d1 mustNotEqual d2) and (d1 mustNotEqual d3)
@@ -106,7 +107,12 @@ class StateSpec extends Specification with DataTables {
     }
 
     "Exercise 6.8: flatMap." in {
-      todo
+      val seed = RNG.Simple(340707234)
+      def rand1:Rand[List[Int]] = RNG._ints(5)
+      def g(l:List[Int]):Rand[String] = r => (l.mkString(", "), r) 
+
+      val results = RNG.flatMap(rand1)(g)(seed)._1
+      results must_== "36696638, 1295827210, -1091999955, 919578349, 1438262205"
     }
 
     "Exercise 6.8: nonNegativeLessThan with flatMap." in {
@@ -136,21 +142,26 @@ class StateSpec extends Specification with DataTables {
       rc(seed)._1 must_== "36696638/0.6034165667369962"
     }
 
+    // Implementations for the value returned by a state ([A]).
     case class CA(val a: String)
     case class CB(val b: String)
 
+    // An implementation of a state ([S]).    
     case class CS(val id: Int) {
       val a = CA("vala=" + id)
       val b = CB("valb=" + (id + 10))
     }
 
     "Exercise 6.10: unit for State." in {
-      todo
+      val ca = CA("vala")
+      val s0 = CS(0)
+      val stateUnit:State[CS, CA] = State.unit(ca)
+      stateUnit.run(s0) must_== (ca, s0)
     }
 
     "Exercise 6.10: map for State." in {
       def run(s: CS): (CA, CS) = (s.a, CS(s.id + 1))
-      val state = State(run)
+      val state:State[CS, CA] = State(run)
       val s0 = CS(0)
       val (a0, s1) = state.run(s0)
       val (a1, s2) = state.run(s1)
@@ -167,7 +178,7 @@ class StateSpec extends Specification with DataTables {
 
     }
 
-    case class CC(val b: String)
+    case class CC(val c: String)
 
     "Exercise 6.10: map2 for State." in {
       def run(s: CS): (CA, CS) = (s.a, CS(s.id + 1))
@@ -178,7 +189,6 @@ class StateSpec extends Specification with DataTables {
       def f(a: CA, b: CB): CC = CC(a.a + "/" + b.b)
       val sb: State[CS, CB] = State(runb)
 
-      // def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] = {
       val stateMap2: State[CS, CC] = state.map2(sb)(f)
       val (c0, sm1) = stateMap2.run(s0)
       val (c1, sm2) = stateMap2.run(sm1)
@@ -202,7 +212,16 @@ class StateSpec extends Specification with DataTables {
     }
 
     "Exercise 6.10: sequence for State." in {
-      todo
+      def run1(s: CS): (CA, CS) = (s.a, CS(s.id + 1))
+      val state1: State[CS, CA] = State(run1)
+      def run2(s: CS): (CA, CS) = (s.a, CS(s.id + 10))
+      val state2: State[CS, CA] = State(run2)
+      def run3(s: CS): (CA, CS) = (s.a, CS(s.id + 100))
+      val state3: State[CS, CA] = State(run3)
+
+      val state = State.sequence(List(state1, state2, state3))
+      val s0 = CS(5)
+      state.run(s0)._1 must_== List(CA("vala=5"), CA("vala=6"), CA("vala=16"))
     }
 
     "Exercise 6.11: candy machine." in {

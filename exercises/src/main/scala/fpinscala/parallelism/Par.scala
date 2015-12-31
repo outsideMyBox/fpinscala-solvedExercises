@@ -44,7 +44,7 @@ object Par {
   def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = ???
     
   // Exercise 7.11: choice and terms of choiceN.
-  def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] = ???
+  def choiceViaChoiceN[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] = ???
   
   // Exercise 7.13: chooser.
   def chooser[A,B](p: Par[A])(choices: A => Par[B]): Par[B] = ???
