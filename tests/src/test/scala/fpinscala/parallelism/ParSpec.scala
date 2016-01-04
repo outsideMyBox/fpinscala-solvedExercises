@@ -62,10 +62,10 @@ class ParSpec extends Specification with DataTables {
       val parB = (es: ExecutorService) => es.submit(CallableCA(d1, "2-"))
       val parC = (es: ExecutorService) => es.submit(CallableCA(d1, "3-"))
       val ps = List(parA, parB, parC)
-      val parList = Par.sequence(ps)
+      def parList = Par.sequence(ps)
 
       try {
-        // The execution time must be roughly lower than 100ms.
+        // The execution time must be around d1 ms.
         val res = parList(es).get(safeMaxFor(d1), TimeUnit.MILLISECONDS)
         res must_== List(CA(s"1-${d1}ms"), CA(s"2-${d1}ms"), CA(s"3-${d1}ms"))
       } catch {

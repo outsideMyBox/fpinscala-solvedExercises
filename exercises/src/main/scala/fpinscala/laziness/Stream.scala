@@ -139,10 +139,10 @@ trait Stream[+A] {
     zipWith(s2)((_,_))  
   
    // Exercise 5.14: startWith.
-  def startsWith1[B](s: Stream[B]): Boolean =
+  def startsWith[B](s: Stream[B]): Boolean =
     (this, s) match {
       case (_, Empty) => true
-      case (Cons(h1, t1), Cons(h2, t2)) if h1() == h2() => t1().startsWith1(t2())
+      case (Cons(h1, t1), Cons(h2, t2)) if h1() == h2() => t1().startsWith(t2())
       case _ => false
     }
 

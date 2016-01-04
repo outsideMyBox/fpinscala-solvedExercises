@@ -1,6 +1,7 @@
 package fpinscala.parallelism
 
 import java.util.concurrent._
+import scala.annotation.tailrec
 
 object Par {
   type Par[A] = ExecutorService => Future[A]
@@ -29,16 +30,65 @@ object Par {
     })
     
   // Exercises 7.3: map2 that respects the contract of timeouts on Future.
-  def map2WithTimeOut[A, B, C](a: Par[A], b: Par[B])(f: (A, B) => C): Par[C] = ???    
+  def map2WithTimeOut[A, B, C](a: Par[A], b: Par[B])(f: (A, B) => C): Par[C] = 
+    (es: ExecutorService) => {
+      val af = a(es) 
+      val bf = b(es)
+      TimeSpentAwareFuture(af, bf, f)
+    }
+    
+  case class TimeSpentAwareFuture[A,B,C](af:Future[A], bf:Future[B], f: (A, B) => C) extends Future[C] {
+    var resultOpt: Option[C] = None
+    
+    def cancel(evenIfRunning: Boolean): Boolean =
+      af.cancel(evenIfRunning) || bf.cancel(evenIfRunning)
+
+    def isCancelled(): Boolean =
+      af.isCancelled() || bf.isCancelled()
+      
+    def isDone(): Boolean =
+      resultOpt.isDefined
+      
+    def get(timeout: Long, units: TimeUnit): C =
+      compute(TimeUnit.MILLISECONDS.convert(timeout, units))
+      
+    def get(): C =
+      compute(Long.MaxValue)
+
+    private def compute(timeoutMs:Long):C = {
+      resultOpt match {
+        case Some(r) => r
+        case None =>
+          val start = System.currentTimeMillis
+          val ar = af.get(timeoutMs, TimeUnit.MILLISECONDS)
+          val stop = System.currentTimeMillis
+          val at = stop - start
+          val br = bf.get(timeoutMs - at, TimeUnit.MILLISECONDS)
+          resultOpt = Some(f(ar, br))
+          resultOpt.get
+      }
+    }
+  }
 
   // Exercise 7.4: asyncF.
-  def asyncF[A,B](f: A => B): A => Par[B] = ???
+  def asyncF[A,B](f: A => B): A => Par[B] =
+     a => fork(unit(f(a)))
   
   // Exercise 7.5: sequence.
-  def sequence[A](as: List[Par[A]]): Par[List[A]] = ???
+  def sequence[A](as: List[Par[A]]): Par[List[A]] =
+    as.foldRight(unit(List[A]()))((h,t) => map2(h, t)(_ :: _))
   
+  def parMap[A,B](ps: List[A])(f: A => B): Par[List[B]] = fork {
+    val fbs: List[Par[B]] = ps.map(asyncF(f))
+    sequence(fbs)
+   }
+    
+    
   // Exercise 7.6: parFilter.
-  def parFilter[A](l: List[A])(f: A => Boolean): Par[List[A]] = ???
+  def parFilter[A](l: List[A])(f: A => Boolean): Par[List[A]] = {
+    val parBools = parMap(l)(f)
+    map2(unit(l), parBools)((elt, bool) => elt.zip(bool).filter(_._2).map(_._1))
+  }
   
   // Exercise 7.11: choiceN.
   def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = ???

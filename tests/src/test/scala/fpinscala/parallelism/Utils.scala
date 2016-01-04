@@ -16,14 +16,18 @@ object Utils {
 
   case class CallableCA(durationMillis: Long, value: String = "") extends Callable[CA] {
     def call(): CA = {
+      println("CA is working...")
       Thread.sleep(durationMillis)
+      println("CA is done")
       CA(s"${value}${durationMillis}ms")
     }
   }
 
   case class CallableCB(durationMillis: Long, value: String = "") extends Callable[CB] {
     def call(): CB = {
+      println("CB is working...")
       Thread.sleep(durationMillis)
+      println("CB is done...")
       CB(s"${value}${durationMillis}ms")
     }
   }
