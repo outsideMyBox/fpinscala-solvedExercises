@@ -91,24 +91,45 @@ object Par {
   }
   
   // Exercise 7.11: choiceN.
-  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = ???
+  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =     es => {
+      val ind = run(es)(n).get
+      run(es)(choices(ind))
+    }
     
   // Exercise 7.11: choice and terms of choiceN.
-  def choiceViaChoiceN[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] = ???
+  def choiceViaChoiceN[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] =
+    choiceN(map(cond)(b => if (b) 0 else 1))(List(t, f))
   
   // Exercise 7.13: chooser.
-  def chooser[A,B](p: Par[A])(choices: A => Par[B]): Par[B] = ???
-  def choiceNViaChooser[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = ???
-  def choiceViaChooser[A](a: Par[Boolean])(ifTrue: Par[A], ifFalse: Par[A]): Par[A] = ???
+  def chooser[A,B](p: Par[A])(choices: A => Par[B]): Par[B] =
+    es => {
+      val k = run(es)(p).get
+      run(es)(choices(k))
+    }
+    
+  def choiceNViaChooser[A](n: Par[Int])(choices: List[Par[A]]): Par[A] =
+    chooser(n)(int => choices(int))
+    
+  def choiceViaChooser[A](a: Par[Boolean])(ifTrue: Par[A], ifFalse: Par[A]): Par[A] =
+    chooser(a)(if (_) ifTrue else ifFalse)
   
   // Exercise 7.14: join.
-  def join[A](a: Par[Par[A]]): Par[A] = ???
+  def join[A](a: Par[Par[A]]): Par[A] =
+    es => run(es)(run(es)(a).get())
   
   // Exercise 7.14: joinViaFlatMap.
-  def joinViaFlatMap[A](a: Par[Par[A]]): Par[A] = ???
+  def flatMap[A,B](p: Par[A])(choices: A => Par[B]): Par[B] =
+    es => {
+      val k = run(es)(p).get
+      run(es)(choices(k))
+    }    
+        
+  def joinViaFlatMap[A](a: Par[Par[A]]): Par[A] =
+    flatMap(a)(x => x)
 
   // Exercise 7.14: flatMapViaJoin.  
-  def flatMapViaJoin[A,B](p: Par[A])(f: A => Par[B]): Par[B] = ???
+  def flatMapViaJoin[A,B](p: Par[A])(f: A => Par[B]): Par[B] =
+    join(map(p)(f))
  
   
   def map[A,B](pa: Par[A])(f: A => B): Par[B] = 
